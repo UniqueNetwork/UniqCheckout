@@ -1,0 +1,27 @@
+{
+  "name": "uniqcheckout",
+  "version": "0.0.1",
+  "description": "Integration Checkout with Unique",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UniqueNetwork/UniqCheckout.git"
+  },
+  "keywords": [
+    "payment",
+    "blockchain"
+  ],
+  "author": "stanta",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UniqueNetwork/UniqCheckout/issues"
+  },
+  "homepage": "https://github.com/UniqueNetwork/UniqCheckout#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1"
+  }
+}
