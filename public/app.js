@@ -126,12 +126,25 @@ function onCardTokenizationFailed(error) {
 
 Frames.addEventHandler(Frames.Events.CARD_TOKENIZED, onCardTokenized);
 function onCardTokenized(event) {
+
+  var xmlHttp = new XMLHttpRequest();
+  const theUrl="/checkout"
+  xmlHttp.open( "POST", theUrl, true ); // false for synchronous request
+  xmlHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+  xmlHttp.onreadystatechange = function() {//Вызывает функцию при смене состояния.
+    if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+        // Запрос завершён. Здесь можно обрабатывать результат.
+    }
+  }
+  xmlHttp.send( JSON.stringify( event) );
+
   var el = document.querySelector(".success-payment-message");
   el.innerHTML =
     "Card tokenization completed<br>" +
     'Your card token is: <span class="token">' +
     event.token +
     "</span>";
+  
 }
 
 Frames.addEventHandler(
