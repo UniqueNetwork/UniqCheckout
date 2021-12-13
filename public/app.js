@@ -136,6 +136,8 @@ function onCardTokenized(event) {
         // Запрос завершён. Здесь можно обрабатывать результат.
     }
   }
+  event.currency = 'GBP';
+  event.amount = '25';
   xmlHttp.send( JSON.stringify( event) );
 
   var el = document.querySelector(".success-payment-message");

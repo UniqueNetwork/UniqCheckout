@@ -1,6 +1,6 @@
 const express = require('express');
 //const { curly } = require('node-libcurl')
-const fetch = require('node-fetch');
+//const fetch = require('node-fetch');
 const path = require('path');
 const bodyParser = require('body-parser');  
 const app = express();
@@ -8,6 +8,9 @@ const port = process.env.PORT || '3001';
 const APIaddr = process.env.APIaddr || "https://api.sandbox.checkout.com/payments"
 const clientID = process.env.clientID || "ack_o7ymo3py5b2ehkf36vqj7edddm"
 const clientSec = process.env.clientSec || "Pmg36sDWQ9WxtPR3"
+const clientSk = process.env.sk || "sk_sbox_vueg7yv6ibajwcjbvxp7mfdzgqe" //'sk_test_3e1ad21b-ac23-4eb3-ad1f-375e9fb56481'
+const clientpk = process.env.pk ||  "pk_sbox_6e4nist6o5uenuq6ei5dithevqt"
+const { Checkout } = require('checkout-sdk-node');
 
 
 
@@ -19,7 +22,31 @@ var jsonParser = bodyParser.json()
 
 app.post('/checkout', jsonParser,  async function (req, res) {
 
+    const cko = new Checkout(clientSk, {pk:clientpk, timeout: 7000});
 
+    (async () => {
+      try {
+        const transaction = await cko.payments.request({
+            source:  {
+              type: "token",
+              token: req.body.token
+   /*              number: '4242424242424242',
+                expiry_month: req.body.expiry_month,
+                expiry_year: req.body.expiry_year,
+                cvv: '100' */
+            } ,
+            currency:  req.body.currency,
+            amount: req.body.amount
+        });
+      }
+      catch (err) {
+        console.log(err)
+      }
+    
+        console.log(transaction.status);
+    })();
+
+/* 
     const formData = {
       client_id: clientID,
       client_secret: clientSec,
@@ -38,7 +65,7 @@ app.post('/checkout', jsonParser,  async function (req, res) {
     );
     
     const data = await resp.text();
-    console.log(data);
+    console.log(data); */
     
   
 });
