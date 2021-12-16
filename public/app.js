@@ -3,7 +3,7 @@ var payButton = document.getElementById("pay-button");
 var form = document.getElementById("payment-form");
 
 
-Frames.init("pk_test_8ac41c0d-fbcc-4ae3-a771-31ea533a2beb"); //TODO translate pubkey from backend?
+Frames.init("pk_sbox_6e4nist6o5uenuq6ei5dithevqt"); //TODO translate pubkey from backend?
 
 var logos = generateLogos();
 function generateLogos() {
