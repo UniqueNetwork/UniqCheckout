@@ -25,25 +25,57 @@ app.post('/checkout', jsonParser,  async function (req, res) {
     const cko = new Checkout(clientSk, {pk:clientpk, timeout: 7000});
 
     (async () => {
+
+      //autentification token
       try {
         const transaction = await cko.payments.request({
             source:  {
-              type: "token",
-              token: req.body.token
-   /*              number: '4242424242424242',
-                expiry_month: req.body.expiry_month,
-                expiry_year: req.body.expiry_year,
+               type: "token",
+              token: req.body.token 
+/*                 number: '4242424242424242',
+                expiry_month: '12', // req.body.expiry_month,
+                expiry_year: '23', //req.body.expiry_year,
                 cvv: '100' */
             } ,
             currency:  req.body.currency,
-            amount: req.body.amount
+            amount: req.body.amount,
+            capture: "false",
+         //   capture_type : "final" ,
+            reference: "123456" // order ID
         });
-      }
+        console.log(transaction);
+        
+        // call market   to accepted deposite 
+        // call market to send NFT
+
+      // if all ok       
+      //finalizing payment
+      //token request 
+      const transaction = await cko.payments.request({
+        source:  {
+           type: "token",
+          token: req.body.token 
+/*                 number: '4242424242424242',
+            expiry_month: '12', // req.body.expiry_month,
+            expiry_year: '23', //req.body.expiry_year,
+            cvv: '100' */
+        } ,
+        currency:  req.body.currency,
+        amount: req.body.amount,
+        //capture: "false",
+        capture_type : "final" ,
+        reference: "123456" // order ID
+      //else 
+      // uncapture money
+    // revoke escrow (?)
+
+      });
       catch (err) {
         console.log(err)
       }
-    
-        console.log(transaction.status);
+
+
+        
     })();
 
 /* 
