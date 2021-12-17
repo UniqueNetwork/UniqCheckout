@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/UniqueNetwork/UniqCheckout#readme",
   "dependencies": {
+    "@truffle/hdwallet-provider": "^2.0.0",
     "body-parser": "^1.19.0",
     "checkout-sdk-node": "^1.0.37",
     "dotenv": "^10.0.0",
