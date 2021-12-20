@@ -128,18 +128,21 @@ Frames.addEventHandler(Frames.Events.CARD_TOKENIZED, onCardTokenized);
 function onCardTokenized(event) {
 
   var xmlHttp = new XMLHttpRequest();
-  const theUrl="/checkout"
+  
+  const theUrl="/checkout";
   xmlHttp.open( "POST", theUrl, true ); // false for synchronous request
   xmlHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-  xmlHttp.onreadystatechange = function() {//Вызывает функцию при смене состояния.
+/*   xmlHttp.onreadystatechange = function() {//Вызывает функцию при смене состояния.
     if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
         // Запрос завершён. Здесь можно обрабатывать результат.
-    }
   }
-  event.currency = 'GBP';
-  event.amount = '25';
+  } */
+      
+  event.currency = 'GBP'; //todo - from form 
+  event.amount = '25'; //todo - from form 
+  event.collectionAddr = "0x01"; //todo - from form 
+  event.tokenID  = "1234"; //todo - from form 
   xmlHttp.send( JSON.stringify( event) );
-
   var el = document.querySelector(".success-payment-message");
   el.innerHTML =
     "Card tokenization completed<br>" +

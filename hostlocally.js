@@ -23,13 +23,13 @@ var jsonParser = bodyParser.json()
 
 
 app.get('/', (req, res) => {
-  console.log (clientpk)
+  
   res.render('index', {
     cckk: clientpk,
   });
 })
 
-app.post('/checkout/:contractNFT/:tokenID', jsonParser,  async function (req, res) {
+app.post('/checkout', jsonParser,  async function (req, res) {
 
     const cko = new Checkout(clientSk, {pk:clientpk, timeout: 7000});
 
@@ -52,42 +52,54 @@ app.post('/checkout/:contractNFT/:tokenID', jsonParser,  async function (req, re
           }, */
             currency:  req.body.currency,
             amount: req.body.amount,
-    //        capture: "false",
+            capture: "false",
             capture_type : "final" ,
             reference: "123456" // order ID
             // https://api-reference.checkout.com/preview/crusoe/#operation/requestAPaymentOrPayout 
         });
         console.log(transaction.id);
-        const details = await cko.payments.get(transaction.id); // or with session id sid_XX
 
-        console.log("details", details)
-        const actions = await cko.payments.getActions(transaction.id);
-        console.log("actions", actions)
+        var available_to_capture = "";
 
-        
-        if (transaction.status === 'Pending') {
+        while (available_to_capture == "") { 
+        setTimeout(() => { console.log("Waiting 1 secs for capturing "); }, 1000);
+        var details = await cko.payments.get(transaction.id); // or with session id sid_XX
+        var available_to_capture = details.balances.available_to_capture
+        console.log("available_to_capture", available_to_capture)
+        }
+
+/*         if (transaction.status === 'Pending') {
           // The payment is 3DS. Redirect the customer to payment.redirectLink
-          sendNFT(req.params.contractNFT, req.params.tokenID)
+     //     sendNFT(req.body.contractNFT, req.body.tokenID)
         } else if (transaction.approved == true && risk.flagged == false) {
           // The payment was successful and not flagged by any risk rule
         } else if (transaction.approved == true && transaction.risk.flagged == true) {
           // The payment was successful but it was flagged by a risk rule; this means you have to manually decide if you want to capture it or void it
         } else if (transaction.approved == false) {
           // the payment was declined
-        }
+        } */
          
         // call market   to accepted deposite 
         // call market to send NFT
 
-      // if all ok       
+   
+        // if all ok       
       //finalizing payment
-      const transaction2 = await cko.payments.capture( transaction.id);
+         const transaction2 = await cko.payments.capture( transaction.id);
       // https://api-reference.checkout.com/preview/crusoe/#tag/Payments/paths/~1payments~1{id}~1captures/post
-    console.log("capture ", transaction2);
+   
       
-    const detailsCap = await cko.payments.get(transaction.id); // or with session id sid_XX
+       var total_captured = "";
 
-    console.log("detailsCap", detailsCap)
+    while (total_captured == "") { 
+    setTimeout(() => { console.log("Waiting 1 secs for capturing "); }, 1000);
+    var details = await cko.payments.get(transaction.id); // or with session id sid_XX
+    var total_captured = details.balances.total_captured
+    console.log("total_captured", total_captured)
+    }
+
+
+    console.log("total_authorized", details.balances.total_authorized)
 
 
     
