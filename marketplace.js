@@ -1,3 +1,4 @@
+async function sendNFT (contractNFT, tokenID, price, sellerWalletAddress  ) {
 
 require('dotenv').config();
 // const Web3 = require('web3');
@@ -11,11 +12,8 @@ const account =  process.env.ACCOUNT;
 const marketplace = process.env.MARKETPLACE;
 const chain = process.env.CHAIN;
 
-
-
-async function sendNFT (contractNFT, tokenID) {
     try {
-        const networkId = await web3.eth.net.getId();
+        //const networkId = await web3.eth.net.getId();
         
         const mp = new web3.eth.Contract(
             MarketPlace.abi,
@@ -38,9 +36,9 @@ async function sendNFT (contractNFT, tokenID) {
     
               //make deposite
     
-              await mp.methods.depositKSM (req.body.price, req.body.sellerWalletAddress).send({from:account, gasPrice: "0x01"});
+              await mp.methods.depositKSM (price, sellerWalletAddress).send({from:account, gasPrice: "0x01"});
               //buy NFT
-              const txBuy = await mp.methods.buyKSM (contractNFT, tokenID, req.body.sellerWalletAddress, req.body.targetWalletAddress).send({from:account, gasPrice: "0x01"});
+              const txBuy = await mp.methods.buyKSM (contractNFT, tokenID, sellerWalletAddress, targetWalletAddress).send({from:account, gasPrice: "0x01"});
               await mp.methods.withdrawAllKSM (order.ownerAddr).send({from:account, gasPrice: "0x01"});
               
          //     res.status(200).json({
@@ -54,6 +52,6 @@ async function sendNFT (contractNFT, tokenID) {
       } catch (err){
       //    res.status(500).send(err);
       } //5XX	 Something went wrong
-}
+};
 
-//  export  {sendNFT};
+ module.exports = sendNFT;

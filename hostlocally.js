@@ -11,7 +11,7 @@ const clientSec = process.env.clientSec || "Pmg36sDWQ9WxtPR3"
 const clientSk = process.env.sk || "sk_sbox_vueg7yv6ibajwcjbvxp7mfdzgqe" //'sk_test_3e1ad21b-ac23-4eb3-ad1f-375e9fb56481'
 const clientpk = process.env.pk ||  "pk_sbox_6e4nist6o5uenuq6ei5dithevqt"
 const { Checkout } = require('checkout-sdk-node');
-const {sendNFT} = require("./marketplace")
+const sendNFT = require("./marketplace")
 
 
 app.use(express.static('./public'));
@@ -68,16 +68,17 @@ app.post('/checkout', jsonParser,  async function (req, res) {
         console.log("available_to_capture", available_to_capture)
         }
 
-/*         if (transaction.status === 'Pending') {
+         if (transaction.status === 'Pending') {
           // The payment is 3DS. Redirect the customer to payment.redirectLink
-     //     sendNFT(req.body.contractNFT, req.body.tokenID)
-        } else if (transaction.approved == true && risk.flagged == false) {
+          sendNFT(req.body.contractNFT, req.body.tokenID, req.body.price, req.body.sellerWalletAddress, req.body.targetWalletAddress)
+        } else if (transaction.approved == true && transaction.risk.flagged == false) {          
           // The payment was successful and not flagged by any risk rule
+          sendNFT(req.body.contractNFT, req.body.tokenID)
         } else if (transaction.approved == true && transaction.risk.flagged == true) {
           // The payment was successful but it was flagged by a risk rule; this means you have to manually decide if you want to capture it or void it
         } else if (transaction.approved == false) {
           // the payment was declined
-        } */
+        } 
          
         // call market   to accepted deposite 
         // call market to send NFT
