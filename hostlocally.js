@@ -12,7 +12,7 @@ const clientSk = process.env.sk || "sk_sbox_vueg7yv6ibajwcjbvxp7mfdzgqe" //'sk_t
 const clientpk = process.env.pk ||  "pk_sbox_6e4nist6o5uenuq6ei5dithevqt"
 const { Checkout } = require('checkout-sdk-node');
 const sendNFT = require("./marketplace")
-
+var details;
 
 app.use(express.static('./public'));
 app.set('view engine', 'ejs');
@@ -62,48 +62,54 @@ app.post('/checkout', jsonParser,  async function (req, res) {
         var available_to_capture = "";
 
         while (available_to_capture == "") { 
-        setTimeout(() => { console.log("Waiting 1 secs for capturing "); }, 1000);
-        var details = await cko.payments.get(transaction.id); // or with session id sid_XX
-        var available_to_capture = details.balances.available_to_capture
-        console.log("available_to_capture", available_to_capture)
+          setTimeout(() => { console.log("Waiting 1 secs for capturing "); }, 1000);
+          details = await cko.payments.get(transaction.id); // or with session id sid_XX
+          var available_to_capture = details.balances.available_to_capture
+          console.log("available_to_capture", available_to_capture)
         }
 
-         if (transaction.status === 'Pending') {
+         if (transaction.status === 'Pending' || (transaction.approved == true && transaction.risk.flagged == false)) {
           // The payment is 3DS. Redirect the customer to payment.redirectLink
-          sendNFT(req.body.contractNFT, req.body.tokenID, req.body.price, req.body.sellerWalletAddress, req.body.targetWalletAddress)
-        } else if (transaction.approved == true && transaction.risk.flagged == false) {          
+          // call market   to accepted deposite  &  send NFT
+   
+           if (await sendNFT(req.body.contractNFT, req.body.tokenID, req.body.amount, req.body.sellerWalletAddress, req.body.targetWalletAddress)) {
+
+          // if all ok       
+          //finalizing payment
+          // https://api-reference.checkout.com/preview/crusoe/#tag/Payments/paths/~1payments~1{id}~1captures/post
+
+           const transaction2 = await cko.payments.capture( transaction.id);
+           await setTimeout(async() => { 
+             console.log("Waiting 2 secs for authorizing "); 
+             details = await cko.payments.get(transaction.id); 
+             console.log("total_authorized", details.balances.total_authorized) 
+            }, 2000);
+            console.log ("all Ok, finish!");
+          }          
+          else {
+            // uncapture money
+            console.log ("Error: NFT didn't send, voiding payment ")
+            const transaction2 = await cko.payments.void( transaction.id);
+            await setTimeout( async () => { 
+              console.log("Waiting 2 secs for void ");   
+              details = await cko.payments.get(transaction.id);             
+              console.log("details.balances", details.balances)
+            }, 2000)
+          }
+       
+        }/*  else if (transaction.approved == true && transaction.risk.flagged == false) {          
           // The payment was successful and not flagged by any risk rule
-          sendNFT(req.body.contractNFT, req.body.tokenID)
-        } else if (transaction.approved == true && transaction.risk.flagged == true) {
+      //    sendNFT(req.body.contractNFT, req.body.tokenID)
+        }  */else if (transaction.approved == true && transaction.risk.flagged == true) {
+          console.log ("risk.flagged = TRUE!!!")
           // The payment was successful but it was flagged by a risk rule; this means you have to manually decide if you want to capture it or void it
         } else if (transaction.approved == false) {
           // the payment was declined
+          console.log ("transaction.approved == false")
         } 
-         
-        // call market   to accepted deposite 
-        // call market to send NFT
-
-   
-        // if all ok       
-      //finalizing payment
-         const transaction2 = await cko.payments.capture( transaction.id);
-      // https://api-reference.checkout.com/preview/crusoe/#tag/Payments/paths/~1payments~1{id}~1captures/post
-   
+  
       
-       var total_captured = "";
 
-    while (total_captured == "") { 
-    setTimeout(() => { console.log("Waiting 1 secs for capturing "); }, 1000);
-    var details = await cko.payments.get(transaction.id); // or with session id sid_XX
-    var total_captured = details.balances.total_captured
-    console.log("total_captured", total_captured)
-    }
-
-
-    console.log("total_authorized", details.balances.total_authorized)
-
-
-    
   }
       catch (err) {
         console.log(err)
