@@ -68,7 +68,7 @@
       </div>
 
       <button id="pay-button" disabled="">
-        PAY GBP 25.00
+        PAY <%= currency %> <%= amount %>
       </button>
 
       <div>
@@ -81,7 +81,14 @@
     </form>
 
     <script src="https://cdn.checkout.com/js/framesv2.min.js"></script>
-    <script>window.CO_PK="<%= cckk %>"</script>
+    <script>window.CO_PK="<%= cckk %>";
+      window.currency="<%= currency %>";
+      window.amount="<%= amount %>";
+      window.contractNFT="<%= contractNFT %>";
+      window.tokenID="<%= tokenID %>";
+      window.sellerWalletAddress="<%= sellerWalletAddress %>";
+      window.targetWalletAddress="<%= targetWalletAddress %>";
+    </script>
     <script src="app.js"></script>
 
 

@@ -20,12 +20,27 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 app.use(bodyParser.raw());
 var jsonParser = bodyParser.json()
-
+/** TEST datas
+ *     currency : 'USD', //todo - from form 
+    amount : '1000', //todo - from form 
+    contractNFT : "0x9441F6db4e3C390ed6AF35f5B0556e14DA4Ffc6E", //todo - from form 
+    tokenID  : "5", //todo - from form 
+    sellerWalletAddress : "0xf1a477099Ef8aA0f096be09A4CBBA858da993c41", //todo - from form 
+    targetWalletAddress : "0x4AE013A1417453Bbd06930814A6cA79D63eF8a88", //todo - from form 
+  test query:
+    ?contractNFT=0x9441F6db4e3C390ed6AF35f5B0556e14DA4Ffc6E&tokenID=5&currency='USD'&amount=1000&sWA=0xf1a477099Ef8aA0f096be09A4CBBA858da993c41&tWA0x4AE013A1417453Bbd06930814A6cA79D63eF8a88
+ */
 
 app.get('/', (req, res) => {
   
   res.render('index', {
     cckk: clientpk,
+    currency : req.query.currency, 
+    amount : req.query.amount ,
+    contractNFT : req.query.contractNFT ,
+    tokenID  : req.query.tokenID,
+    sellerWalletAddress : req.query.sWA , 
+    targetWalletAddress : req.query.tWA 
   });
 })
 
@@ -41,7 +56,8 @@ app.post('/checkout', jsonParser,  async function (req, res) {
             source:  {
               type: "token",
               token: req.body.token 
-/*                 number: '4242424242424242',
+/*  TEST DATA 
+               number: '4242424242424242',
                 expiry_month: '12', // req.body.expiry_month,
                 expiry_year: '23', //req.body.expiry_year,
                 cvv: '100' */
@@ -61,12 +77,15 @@ app.post('/checkout', jsonParser,  async function (req, res) {
 
         var available_to_capture = "";
 
-        while (available_to_capture == "") { 
-          setTimeout(() => { console.log("Waiting 1 secs for capturing "); }, 1000);
-          details = await cko.payments.get(transaction.id); // or with session id sid_XX
-          var available_to_capture = details.balances.available_to_capture
-          console.log("available_to_capture", available_to_capture)
-        }
+        //while (available_to_capture == "") { 
+          setTimeout(async () => { 
+            console.log("Waiting 1 secs for capturing "); 
+            details = await cko.payments.get(transaction.id); // or with session id sid_XX
+            var available_to_capture = details.balances.available_to_capture
+            console.log("available_to_capture", available_to_capture)
+          }, 1000);
+
+       // }
 
          if (transaction.status === 'Pending' || (transaction.approved == true && transaction.risk.flagged == false)) {
           // The payment is 3DS. Redirect the customer to payment.redirectLink
@@ -76,7 +95,6 @@ app.post('/checkout', jsonParser,  async function (req, res) {
 
           // if all ok       
           //finalizing payment
-          // https://api-reference.checkout.com/preview/crusoe/#tag/Payments/paths/~1payments~1{id}~1captures/post
 
            const transaction2 = await cko.payments.capture( transaction.id);
            await setTimeout(async() => { 

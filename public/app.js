@@ -132,18 +132,13 @@ function onCardTokenized(event) {
   const theUrl="/checkout";
   xmlHttp.open( "POST", theUrl, true ); // false for synchronous request
   xmlHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-/*   xmlHttp.onreadystatechange = function() {//Вызывает функцию при смене состояния.
-    if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-        // Запрос завершён. Здесь можно обрабатывать результат.
-  }
-  } */
       
-  event.currency = 'GBP'; //todo - from form 
-  event.amount = '1000'; //todo - from form 
-  event.contractNFT = "0x9441F6db4e3C390ed6AF35f5B0556e14DA4Ffc6E"; //todo - from form 
-  event.tokenID  = "5"; //todo - from form 
-  event.sellerWalletAddress = "0xf1a477099Ef8aA0f096be09A4CBBA858da993c41"; //todo - from form 
-  event.targetWalletAddress = "0x4AE013A1417453Bbd06930814A6cA79D63eF8a88"; //todo - from form 
+  event.currency =  window.currency
+  event.amount = window.amount
+  event.contractNFT = window.contractNFT 
+  event.tokenID  = window.tokenID 
+  event.sellerWalletAddress = window.sellerWalletAddress  
+  event.targetWalletAddress = window.targetWalletAddress 
   xmlHttp.send( JSON.stringify( event) );
   var el = document.querySelector(".success-payment-message");
   el.innerHTML =
