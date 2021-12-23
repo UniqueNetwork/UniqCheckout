@@ -28,7 +28,7 @@ var jsonParser = bodyParser.json()
     sellerWalletAddress : "0xf1a477099Ef8aA0f096be09A4CBBA858da993c41", //todo - from form 
     targetWalletAddress : "0x4AE013A1417453Bbd06930814A6cA79D63eF8a88", //todo - from form 
   test query:
-    ?contractNFT=0x9441F6db4e3C390ed6AF35f5B0556e14DA4Ffc6E&tokenID=5&currency='USD'&amount=1000&sWA=0xf1a477099Ef8aA0f096be09A4CBBA858da993c41&tWA0x4AE013A1417453Bbd06930814A6cA79D63eF8a88
+    http://localhost:3001/?contractNFT=0x9441F6db4e3C390ed6AF35f5B0556e14DA4Ffc6E&tokenID=5&currency=USD&amount=1000&sWA=0xf1a477099Ef8aA0f096be09A4CBBA858da993c41&tWA=0x4AE013A1417453Bbd06930814A6cA79D63eF8a88
  */
 
 app.get('/', (req, res) => {
@@ -51,6 +51,7 @@ app.post('/checkout', jsonParser,  async function (req, res) {
     (async () => {
 
       //autentification token request 
+      // https://checkout.github.io/checkout-sdk-node/intro
       try {
         const transaction = await cko.payments.request({
             source:  {
@@ -69,7 +70,7 @@ app.post('/checkout', jsonParser,  async function (req, res) {
             currency:  req.body.currency,
             amount: req.body.amount,
             capture: "false",
-            capture_type : "final" ,
+          //  capture_type : "final" ,
             reference: "123456" // order ID
             // https://api-reference.checkout.com/preview/crusoe/#operation/requestAPaymentOrPayout 
         });
@@ -108,6 +109,7 @@ app.post('/checkout', jsonParser,  async function (req, res) {
             // uncapture money
             console.log ("Error: NFT didn't send, voiding payment ")
             const transaction2 = await cko.payments.void( transaction.id);
+            //           const transaction2 = await cko.payments.refund( transaction.id, {amount:  req.body.amount });
             await setTimeout( async () => { 
               console.log("Waiting 2 secs for void ");   
               details = await cko.payments.get(transaction.id);             
