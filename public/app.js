@@ -3,7 +3,7 @@ var payButton = document.getElementById("pay-button");
 var form = document.getElementById("payment-form");
 
 
-Frames.init("pk_test_8ac41c0d-fbcc-4ae3-a771-31ea533a2beb"); //TODO translate pubkey from backend?
+Frames.init(window.CO_PK); //TODO translate pubkey from backend?
 
 var logos = generateLogos();
 function generateLogos() {
@@ -126,12 +126,27 @@ function onCardTokenizationFailed(error) {
 
 Frames.addEventHandler(Frames.Events.CARD_TOKENIZED, onCardTokenized);
 function onCardTokenized(event) {
+
+  var xmlHttp = new XMLHttpRequest();
+  
+  const theUrl="/checkout";
+  xmlHttp.open( "POST", theUrl, true ); // false for synchronous request
+  xmlHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+      
+  event.currency =  window.currency
+  event.amount = window.amount
+  event.contractNFT = window.contractNFT 
+  event.tokenID  = window.tokenID 
+  event.sellerWalletAddress = window.sellerWalletAddress  
+  event.targetWalletAddress = window.targetWalletAddress 
+  xmlHttp.send( JSON.stringify( event) );
   var el = document.querySelector(".success-payment-message");
   el.innerHTML =
     "Card tokenization completed<br>" +
     'Your card token is: <span class="token">' +
     event.token +
     "</span>";
+  
 }
 
 Frames.addEventHandler(

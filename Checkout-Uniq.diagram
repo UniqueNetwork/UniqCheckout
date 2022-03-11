@@ -1,0 +1,38 @@
+title Checkout-Uniq
+/// actor Buyer 
+/// actor Seller
+
+Seller -> SellersWalletUniq : select NFT for sell
+SellersWalletUniq -> MarketPlaceUniq: Locks NFT in UNQchain
+MarketPlaceUniq-> UniqChain: Transfer NFT to \n marketplace contract
+
+
+Buyer -> BuyerWalletUniq: Create BuyerWalletUniq
+Buyer -> MarketPlaceUniq: Select NFT
+note right of Buyer 
+Buyer buys NFT with \n credit card via CKOfixed price
+end note
+
+MarketPlaceUniq -> UniqChain: idNFT lock for sale
+MarketPlaceUniq -> Checkout: NFTMarketPlaceUniq calls CKO API \nto create new credit card transaction
+Checkout -> Buyer: ask for charging (shows CKO iFrame)
+Buyer -> Checkout:  enters card details and FREEZE funds.
+Checkout -> MarketPlaceUniq: funds frozen
+MarketPlaceUniq -> Checkout : really frozen? Show me yoe evidence
+Checkout -> MarketPlaceUniq : yes, there is evidence (whaaat?)
+MarketPlaceUniq-> BuyerWalletUniq: MarketPlaceUniq receives txn \n  details and sends NFT to buyer
+BuyerWalletUniq ->Buyer: "NFT received" notification
+MarketPlaceUniq -> Checkout : allow  charging 
+Checkout -> Bank: API request accepted. \n CKO passes credit card  txn details \n to issuing  bank/card schemes
+Bank -> Checkout: Issuing bank/card schemes pass txn \n information to CKO. Payment accepted.
+
+Checkout -> EscrowUniq  : CKO sends $USD funds NFTMarketPlace \n account net of fees
+
+EscrowUniq-> MarketPlaceUniq  : CKO sends notification got payment, buyer's balance increased
+EscrowUniq -> Checkout: send Sum  to seller
+Checkout -> Bank : send money to seller 
+Bank -> Seller: sends money to Seller
+note left  of EscrowUniq
+        Need oracle for Uniq /USD price
+end note
+Checkout -> MarketPlaceUniq: NFTMarketPlaceUniq receives settlement complete notification
