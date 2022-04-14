@@ -7,5 +7,5 @@ Integration with Checkout
 # Start
 node hostlocally.js
 
-#Use
+# Use
 http://localhost:3001/
