@@ -5,4 +5,7 @@ Integration with Checkout
 - Npm i
 
 # Start
-Node hostlocally.js
+node hostlocally.js
+
+#Use
+http://localhost:3001/
